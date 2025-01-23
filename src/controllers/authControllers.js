@@ -58,7 +58,6 @@ const loginUser = async (req, res) => {
     res.json({ message: 'Login successful', token });
 };
 
-// Get User Data (Authenticated)
 const getUserData = async (req, res) => {
     const token = req.headers['authorization']?.split(' ')[1];
 
@@ -73,7 +72,7 @@ const getUserData = async (req, res) => {
         // Ambil data pengguna berdasarkan userId yang terdecode dari token
         const { data: userData, error: userError } = await supabase
             .from('users')
-            .select('username, email, phone_number')
+            .select('id, username, email, phone_number') // Tambahkan 'id' di sini
             .eq('id', decoded.userId)
             .single();
 
@@ -81,11 +80,18 @@ const getUserData = async (req, res) => {
             return res.status(404).json({ error: 'User not found' });
         }
 
-        res.json({ username: userData.username, email: userData.email, phone_number: userData.phone_number });
+        // Sertakan 'id' dalam respons
+        res.json({ 
+            id: userData.id, 
+            username: userData.username, 
+            email: userData.email, 
+            phone_number: userData.phone_number 
+        });
     } catch (error) {
         console.error(error);
         res.status(403).json({ error: 'Invalid or expired token' });
     }
 };
+
 
 module.exports = { registerUser, loginUser, getUserData };
