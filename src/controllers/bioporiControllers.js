@@ -9,22 +9,10 @@ const addBiopori = async (req, res) => {
     // Mengambil user_id dari request body yang sudah diverifikasi oleh middleware
     const { image_url, name, date, time, endDate, endTime} = req.body;
     const user_id = req.user.id; // Pastikan user_id adalah integer
-    
-    // Log untuk memeriksa apakah user_id dan data lainnya ada
-    console.log('User ID:', user_id);
-    console.log('Name:', name);
-    console.log('Date:', date);
-    console.log('Time:', time);
-
-    // Validasi jika ada data yang kosong
-    // if (!user_id || !name || !date || !time) {
-    //   return res.status(400).json({ error: 'User ID, name, date, and time are required' });
-    // }
 
     // Menghitung end_date (60 hari setelah date)
     const startDate = new Date(date);
     startDate.setDate(startDate.getDate() + 60);
-
 
     // Insert data ke tabel 'biopori'
     const { data, error } = await supabase
