@@ -6,9 +6,13 @@ const addBiopori = async (req, res) => {
     // Log data yang diterima
     console.log('Request Body:', req.body);
     
-    // Mengambil user_id dari request body yang sudah diverifikasi oleh middleware
-    const { image_url, name, date, time, endDate, endTime} = req.body;
-    const user_id = req.user.id; // Pastikan user_id adalah integer
+    // Mengambil user_id dari request yang sudah diverifikasi oleh middleware
+    const { image_url, name, date, time, endDate, endTime } = req.body;
+    const user_id = req.user.id; // Pastikan user_id ada di token
+
+    if (!user_id) {
+      return res.status(400).json({ error: 'User ID is missing from the token' });
+    }
 
     // Menghitung end_date (60 hari setelah date)
     const startDate = new Date(date);
@@ -19,7 +23,7 @@ const addBiopori = async (req, res) => {
       .from('biopori')
       .insert([
         {
-          user_id, // Pastikan ini adalah integer
+          user_id, // Gunakan user_id yang sudah ada di token
           image_url: image_url || null, // Handle image_url jika opsional
           name,
           date,
