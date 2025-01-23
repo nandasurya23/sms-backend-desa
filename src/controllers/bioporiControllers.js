@@ -17,9 +17,9 @@ const addBiopori = async (req, res) => {
     console.log('Time:', time);
 
     // Validasi jika ada data yang kosong
-    if (!user_id || !name || !date || !time) {
-      return res.status(400).json({ error: 'User ID, name, date, and time are required' });
-    }
+    // if (!user_id || !name || !date || !time) {
+    //   return res.status(400).json({ error: 'User ID, name, date, and time are required' });
+    // }
 
     // Menghitung end_date (60 hari setelah date)
     const startDate = new Date(date);
