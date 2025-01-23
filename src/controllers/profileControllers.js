@@ -32,4 +32,26 @@ const updateProfile = async (req, res) => {
   res.status(200).json({ message: 'Profile updated successfully', data });
 };
 
-module.exports = { updateProfile };
+// Get Profile
+const getProfile = async (req, res) => {
+  const { user_id } = req.params;  // Get user_id from request params
+
+  console.log("Fetching profile for user:", user_id);
+
+  const { data, error } = await supabase
+    .from('users')
+    .select('id, username, phone_number, email, banjar, profile_picture')
+    .eq('id', user_id)
+    .single();  // Fetch a single row for the user
+
+  if (error) {
+    console.log("Database error:", error);  // Log any error returned by Supabase
+    return res.status(400).json({ error: error.message });
+  }
+
+  console.log("Fetched profile data:", data);  // Log the fetched profile data
+
+  res.status(200).json({ message: 'Profile fetched successfully', data });
+};
+
+module.exports = { updateProfile, getProfile };
