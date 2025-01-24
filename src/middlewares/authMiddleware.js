@@ -1,21 +1,25 @@
 const jwt = require('jsonwebtoken');
 
 const authenticateToken = (req, res, next) => {
-    const token = req.header('Authorization')?.replace('Bearer ', '');  // Getting the token from the header
+    const token = req.header('Authorization')?.replace('Bearer ', '');
 
     if (!token) {
         return res.status(401).json({ error: 'Access denied. No token provided.' });
     }
 
     try {
-        // Verify the token and get the user data
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);  // Replace `JWT_SECRET` with your secret key
+        const decoded = jwt.verify(token, process.env.JWT_SECRET); // Verifikasi token dengan JWT_SECRET
+        console.log('Decoded Token:', decoded); // Debug log untuk memeriksa isi token
 
-        // Assuming the decoded token contains user information, like the user ID
-        req.user = decoded;  // Attach user data to the request object (if you're using a token that contains user data)
+        // Pastikan userId tersedia
+        if (!decoded.userId) {
+            return res.status(400).json({ error: 'User ID is missing from the token' });
+        }
 
-        next();  // Proceed to the next middleware or route handler
+        req.user = { id: decoded.userId, username: decoded.username }; // Attach userId dan username ke req.user
+        next(); // Lanjut ke middleware/handler berikutnya
     } catch (error) {
+        console.error('Token verification failed:', error.message); // Debug log error
         return res.status(400).json({ error: 'Invalid token' });
     }
 };

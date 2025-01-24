@@ -1,10 +1,12 @@
 const express = require('express');
-const { addBiopori } = require('../controllers/bioporiControllers');
+const { addBiopori, getBiopori, updateBiopori } = require('../controllers/bioporiControllers');
 const authenticateToken = require('../middlewares/authMiddleware'); // Import middleware
 
 const router = express.Router();
 
-// Tambahkan middleware authenticateToken untuk melindungi route ini
-router.post('/biopori', authenticateToken, addBiopori);
+// Tambahkan middleware authenticateToken untuk melindungi semua route
+router.post('/biopori', authenticateToken, addBiopori); // Route untuk menambahkan biopori
+router.get('/biopori', authenticateToken, getBiopori); 
+router.put('/biopori/:id', authenticateToken, updateBiopori);
 
 module.exports = router;
