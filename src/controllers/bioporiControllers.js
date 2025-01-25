@@ -12,6 +12,18 @@ const addBiopori = async (req, res) => {
       return res.status(400).json({ error: 'User ID is missing from the token' });
     }
 
+    // Parsing tanggal dan waktu untuk memastikan mereka dalam format ISO
+    const parsedDate = new Date(date);
+    const parsedTime = new Date(`1970-01-01T${time}`);  // Menganggap waktu dalam format 'HH:mm'
+    const parsedEndDate = new Date(endDate);
+    const parsedEndTime = new Date(`1970-01-01T${endTime}`);
+
+    // Format tanggal dan waktu ke dalam format ISO 8601
+    const formattedDate = parsedDate.toISOString().split('T')[0];  // 'YYYY-MM-DD'
+    const formattedTime = parsedTime.toISOString().split('T')[1].slice(0, 8);  // 'HH:mm:ss'
+    const formattedEndDate = parsedEndDate.toISOString().split('T')[0];  // 'YYYY-MM-DD'
+    const formattedEndTime = parsedEndTime.toISOString().split('T')[1].slice(0, 8);  // 'HH:mm:ss'
+
     const { data, error } = await supabase
       .from('biopori')
       .insert([
@@ -19,10 +31,10 @@ const addBiopori = async (req, res) => {
           user_id, // Gunakan user_id dari token
           image_url: image_url || null,
           name,
-          date,
-          time,
-          end_date: endDate,
-          end_time: endTime,
+          date: formattedDate,
+          time: formattedTime,
+          end_date: formattedEndDate,
+          end_time: formattedEndTime,
           isfull: false, // Default nilai isFull
           ispanen: false // Default nilai isPanen
         },
@@ -39,6 +51,7 @@ const addBiopori = async (req, res) => {
     return res.status(500).json({ error: 'Server error' });
   }
 };
+
 
 
 // Get Biopori Data
