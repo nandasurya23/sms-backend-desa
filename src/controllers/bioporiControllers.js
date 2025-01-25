@@ -4,7 +4,7 @@ const supabase = require('../models/db');
 const addBiopori = async (req, res) => {
   try {
     console.log('Request Body:', req.body);
-    
+
     const { image_url, name, date, time, endDate, endTime } = req.body;
     const user_id = req.user.id; // Ambil user_id dari req.user yang sudah disiapkan di middleware
 
@@ -87,6 +87,95 @@ const getBiopori = async (req, res) => {
   }
 };
 
+// Menandai Biopori sebagai penuh
+const markBioporiAsFull = async (req, res) => {
+  try {
+    const { id } = req.params;  // Ambil ID dari URL parameter
+    const user_id = req.user.id;  // Ambil user_id dari token
+
+    // Validasi user_id
+    if (!user_id) {
+      return res.status(400).json({ error: 'User ID is missing from the token' });
+    }
+
+    // Ambil data biopori berdasarkan ID dan user_id
+    const { data, error } = await supabase
+      .from('biopori')
+      .select('*')
+      .eq('id', id)
+      .eq('user_id', user_id)
+      .single();
+
+    if (error || !data) {
+      return res.status(404).json({ error: 'Biopori not found' });
+    }
+
+    // Update status biopori menjadi penuh
+    const { data: updatedData, error: updateError } = await supabase
+      .from('biopori')
+      .update({
+        isfull: true
+      })
+      .eq('id', id)
+      .eq('user_id', user_id)
+      .select();
+
+    if (updateError) {
+      return res.status(400).json({ error: updateError.message });
+    }
+
+    res.status(200).json({ message: 'Biopori marked as full', data: updatedData });
+  } catch (err) {
+    console.error('Error marking biopori as full:', err.message);
+    return res.status(500).json({ error: 'Server error' });
+  }
+};
+
+// Menandai Biopori sebagai panen
+const markBioporiAsHarvested = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user_id = req.user.id;
+
+    // Validasi user_id
+    if (!user_id) {
+      return res.status(400).json({ error: 'User ID is missing from the token' });
+    }
+
+    // Ambil data biopori berdasarkan ID dan user_id
+    const { data, error } = await supabase
+      .from('biopori')
+      .select('*')
+      .eq('id', id)
+      .eq('user_id', user_id)
+      .single();
+
+    if (error || !data) {
+      return res.status(404).json({ error: 'Biopori not found' });
+    }
+
+    // Update status biopori menjadi panen
+    const { data: updatedData, error: updateError } = await supabase
+      .from('biopori')
+      .update({
+        ispanen: true
+      })
+      .eq('id', id)
+      .eq('user_id', user_id)
+      .select();
+
+    if (updateError) {
+      return res.status(400).json({ error: updateError.message });
+    }
+
+    res.status(200).json({ message: 'Biopori marked as harvested', data: updatedData });
+  } catch (err) {
+    console.error('Error marking biopori as harvested:', err.message);
+    return res.status(500).json({ error: 'Server error' });
+  }
+};
+
+
 // UPDATE BIOPORI
 const updateBiopori = async (req, res) => {
   try {
@@ -142,4 +231,7 @@ const updateBiopori = async (req, res) => {
 };
 
 
-module.exports = { addBiopori, getBiopori, updateBiopori };
+module.exports = {
+  addBiopori, getBiopori, updateBiopori, markBioporiAsFull,
+  markBioporiAsHarvested
+};
