@@ -12,6 +12,14 @@ const addBiopori = async (req, res) => {
       return res.status(400).json({ error: 'User ID is missing from the token' });
     }
 
+    // Validate the date and time formats
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/; // YYYY-MM-DD format
+    const timeRegex = /^\d{2}:\d{2}$/; // HH:mm format
+
+    if (!dateRegex.test(date) || !timeRegex.test(time) || !dateRegex.test(endDate) || !timeRegex.test(endTime)) {
+      return res.status(400).json({ error: 'Invalid date or time format' });
+    }
+
     // Parsing tanggal dan waktu untuk memastikan mereka dalam format ISO
     const parsedDate = new Date(date);
     const parsedTime = new Date(`1970-01-01T${time}`);  // Menganggap waktu dalam format 'HH:mm'
@@ -51,6 +59,7 @@ const addBiopori = async (req, res) => {
     return res.status(500).json({ error: 'Server error' });
   }
 };
+
 
 
 
