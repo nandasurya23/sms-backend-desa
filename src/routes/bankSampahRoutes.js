@@ -1,9 +1,11 @@
 const express = require('express');
-const { addSampah } = require('../controllers/bankSampahControllers');
+const { addBankSampah } = require('../controllers/bankSampahControllers');
 const authenticateToken = require('../middlewares/authMiddleware');
+const upload = require('../middlewares/uploadMiddleware'); // Middleware upload
 
 const router = express.Router();
 
-router.post('/bank-sampah', authenticateToken, addSampah);
+// Endpoint untuk menambahkan bank sampah
+router.post('/add-bank-sampah', authenticateToken, upload.array('images[]', 5), addBankSampah); // Maksimal 5 gambar
 
 module.exports = router;
