@@ -1,11 +1,11 @@
-const cloudinary = require('../utils/cloudinary');
 const supabase = require('../models/db');
 
 // Fungsi untuk menambah data ke tabel bank_sampah
 const addBankSampah = async (req, res) => {
   try {
-    const { userId, address, weight, category} = req.body;
+    const { userId, address, weight, category } = req.body;
 
+    // Pastikan semua field yang diperlukan ada
     if (!userId || !address || !weight || !category) {
       return res.status(400).json({ error: 'All fields are required' });
     }
@@ -21,8 +21,7 @@ const addBankSampah = async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-
-    // Menambahkan data ke tabel bank_sampah
+    // Menambahkan data ke tabel bank_sampah tanpa gambar
     const { data, error } = await supabase
       .from('bank_sampah')
       .insert([
@@ -31,7 +30,6 @@ const addBankSampah = async (req, res) => {
           address,
           weight,
           category,
-        //   images: images, 
         },
       ])
       .select();
