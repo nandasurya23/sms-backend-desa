@@ -1,9 +1,11 @@
 const express = require('express');
-const { updateProfile } = require('../controllers/profileControllers');
+const { getProfile, updateProfile } = require('../controllers/profileControllers');
+const authenticateToken = require('../middlewares/authMiddleware');
 
 const router = express.Router();
 
-router.put('/profile', updateProfile);
+router.get('/profile/:user_id', authenticateToken, getProfile);
+router.put('/profile',authenticateToken, updateProfile);
 
 
 module.exports = router;
