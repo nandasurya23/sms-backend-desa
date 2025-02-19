@@ -4,7 +4,7 @@ const authenticateToken = require('../middlewares/authMiddleware');
 
 const router = express.Router();
 
-router.get('/profile/:user_id', authenticateToken, getProfile);
+router.get('/profile', authenticateToken, getProfile);
 router.put('/profile',authenticateToken, updateProfile);
 
 

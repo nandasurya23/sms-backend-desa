@@ -3,29 +3,30 @@ const supabase = require('../models/db');
 
 // Get Profile
 const getProfile = async (req, res) => {
-  const { user_id } = req.params; // Ambil user_id dari parameter URL
+  const user_id = req.user.id; // Ambil dari middleware
 
   if (!user_id) {
-    return res.status(400).json({ error: 'User ID is required' });
+    return res.status(400).json({ error: "User ID is required" });
   }
 
   try {
     const { data, error } = await supabase
-      .from('users')
-      .select('id, username, email, phone_number, banjar, profile_picture') // Sesuaikan dengan kolom yang ada
-      .eq('id', user_id)
-      .single(); // Karena hanya satu pengguna
+      .from("users")
+      .select("id, username, email, phone_number, banjar, profile_picture")
+      .eq("id", user_id)
+      .single();
 
     if (error || !data) {
-      return res.status(404).json({ error: 'User not found' });
+      return res.status(404).json({ error: "User not found" });
     }
 
-    res.status(200).json({ message: 'Profile retrieved successfully', data });
+    res.status(200).json({ message: "Profile retrieved successfully", data });
   } catch (err) {
-    console.error('Server Error:', err);
-    res.status(500).json({ error: 'Server error, please try again later' });
+    console.error("Server Error:", err);
+    res.status(500).json({ error: "Server error, please try again later" });
   }
 };
+
 
 // Update Profile
 const updateProfile = async (req, res) => {
