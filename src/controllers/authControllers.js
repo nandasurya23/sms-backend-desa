@@ -1,9 +1,8 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const supabase = require('../models/db');
-require('dotenv').config(); // Untuk memuat kunci rahasia JWT
+require('dotenv').config(); 
 
-// Register User
 const registerUser = async (req, res) => {
     const { username, phone_number, email, password } = req.body;
 
@@ -32,7 +31,6 @@ const registerUser = async (req, res) => {
     }
 };
 
-// Login User
 const loginUser = async (req, res) => {
     const { username, password } = req.body;
 
@@ -52,7 +50,6 @@ const loginUser = async (req, res) => {
         return res.status(400).json({ error: 'Invalid password' });
     }
 
-    // Membuat JWT Token
     const token = jwt.sign({ userId: data.id, username: data.username }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
     res.json({ message: 'Login successful', token });
@@ -66,13 +63,11 @@ const getUserData = async (req, res) => {
     }
 
     try {
-        // Verifikasi JWT Token
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-        // Ambil data pengguna berdasarkan userId yang terdecode dari token
         const { data: userData, error: userError } = await supabase
             .from('users')
-            .select('id, username, email, phone_number') // Tambahkan 'id' di sini
+            .select('id, username, email, phone_number') 
             .eq('id', decoded.userId)
             .single();
 
@@ -80,7 +75,6 @@ const getUserData = async (req, res) => {
             return res.status(404).json({ error: 'User not found' });
         }
 
-        // Sertakan 'id' dalam respons
         res.json({ 
             id: userData.id, 
             username: userData.username, 
